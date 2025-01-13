@@ -1,32 +1,39 @@
-import React, { useState } from 'react';
-import { FaUser, FaLock, FaEnvelope, FaUserPlus } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import { registerUser } from '../api';
-import { notify } from '../utils';
+import React, { useState } from "react";
+import { FaUser, FaLock, FaEnvelope, FaUserPlus } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { registerUser } from "../api";
 
 function Signup() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSignup = async () => {
-    if (!username || !password || !email) {
-      notify('Please fill in all fields', 'error');
+    if (!username.trim() || !email.trim() || !password.trim()) {
+      toast.error("Please fill in all fields.");
       return;
     }
+
     const userObj = { username, password, email };
+
     try {
-      const { success, message } = await registerUser(userObj);
-      if (success) {
-        notify(message, 'success');
-        navigate('/login'); // Redirect to login after successful signup
+      setLoading(true);
+      const response = await registerUser(userObj);
+
+      if (response.success) {
+        toast.success(response.message, { position: "top-right" });
+        navigate("/login");
       } else {
-        notify(message, 'error');
+        toast.error(response.message);
       }
-    } catch (err) {
-      console.error(err);
-      notify('Signup failed', 'error');
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred during signup. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,10 +82,21 @@ function Signup() {
         </div>
         <button
           onClick={handleSignup}
-          className="w-full bg-green-500 text-white p-2 rounded-lg hover:bg-green-600"
+          className={`w-full text-white p-2 rounded-lg ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-green-500 hover:bg-green-600"
+          }`}
+          disabled={loading}
         >
-          <FaUserPlus className="inline mr-2" />
-          Sign Up
+          {loading ? (
+            "Signing Up..."
+          ) : (
+            <>
+              <FaUserPlus className="inline mr-2" />
+              Sign Up
+            </>
+          )}
         </button>
       </div>
     </div>
