@@ -13,7 +13,15 @@ app.get("/", (req, res) => {
   res.send("Hello from the server");
 });
 
-app.use(cors());
+const corsOptions = {
+  origin: "https://simple-task-manager-dh7f.onrender.com", // Frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,  // If you need to send cookies or session data
+};
+
+
+app.use(cors(corsOptions));
+
 app.use(bodyParser.json());
 
 app.use("/tasks", TaskRouter);
