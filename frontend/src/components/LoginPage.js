@@ -7,7 +7,7 @@ import { toast } from "react-hot-toast";
 async function loginUser(credentials) {
   try {
     const response = await axios.post(
-      "http://localhost:8080/login",
+      "https://simple-task-backend.onrender.com/login",
       credentials
     );
     return response.data;
