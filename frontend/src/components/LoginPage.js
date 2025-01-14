@@ -37,7 +37,7 @@ function Login({ setIsAuthenticated }) {
         localStorage.setItem("token", token);
         setIsAuthenticated(true);
         toast.success("Login successful!", { position: "top-right" });
-        navigate("/");
+        navigate("/tasks");
       } else {
         toast.error(message);
       }

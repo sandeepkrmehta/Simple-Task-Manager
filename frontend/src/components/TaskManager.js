@@ -23,8 +23,6 @@ function TaskManager() {
 
   const handleTask = () => {
     if (updateTask && input) {
-      // Update task API call
-      console.log("update api call");
       const obj = {
         taskName: input,
         isDone: updateTask.isDone,
@@ -32,8 +30,6 @@ function TaskManager() {
       };
       handleUpdateItem(obj);
     } else if (updateTask === null && input) {
-      console.log("create api call");
-      // Create task API call
       handleAddTask();
     }
     setInput("");
@@ -49,14 +45,13 @@ function TaskManager() {
     const obj = {
       taskName: input,
       isDone: false,
+      createdAt: new Date(),
     };
     try {
       const { success, message } = await CreateTask(obj);
       if (success) {
-        // Show success toast
         notify(message, "success");
       } else {
-        // Show error toast
         notify(message, "error");
       }
       fetchAllTasks();
@@ -73,7 +68,7 @@ function TaskManager() {
       setCopyTasks(data);
     } catch (err) {
       console.error(err);
-      notify("Failed to create task", "error");
+      notify("Failed to fetch tasks", "error");
     }
   };
 
@@ -85,10 +80,8 @@ function TaskManager() {
     try {
       const { success, message } = await DeleteTaskById(id);
       if (success) {
-        // Show success toast
         notify(message, "success");
       } else {
-        // Show error toast
         notify(message, "error");
       }
       fetchAllTasks();
@@ -107,10 +100,8 @@ function TaskManager() {
     try {
       const { success, message } = await UpdateTaskById(_id, obj);
       if (success) {
-        // Show success toast
         notify(message, "success");
       } else {
-        // Show error toast
         notify(message, "error");
       }
       fetchAllTasks();
@@ -124,15 +115,13 @@ function TaskManager() {
     const { _id, isDone, taskName } = item;
     const obj = {
       taskName,
-      isDone: isDone,
+      isDone,
     };
     try {
       const { success, message } = await UpdateTaskById(_id, obj);
       if (success) {
-        // Show success toast
         notify(message, "success");
       } else {
-        // Show error toast
         notify(message, "error");
       }
       fetchAllTasks();
@@ -156,7 +145,6 @@ function TaskManager() {
       <h1 className="text-3xl font-semibold text-center mb-6 text-gray-800">
         Task Manager App
       </h1>
-      {/* Input and Search Box */}
       <div className="flex justify-between items-center w-full mb-6 space-x-4">
         <div className="flex w-full sm:w-2/3">
           <input
@@ -185,22 +173,25 @@ function TaskManager() {
         </div>
       </div>
 
-      {/* List of tasks */}
       <div className="w-full space-y-4">
         {tasks.map((item) => (
           <div
             key={item._id}
-            className="flex justify-between items-center p-4 bg-white shadow-lg rounded-lg border border-gray-200"
+            className="flex flex-col p-4 bg-white shadow-lg rounded-lg border border-gray-200"
           >
-            <span
-              className={`text-lg ${
-                item.isDone ? "line-through text-gray-400" : "text-gray-800"
-              }`}
-            >
-              {item.taskName}
-            </span>
-
-            <div className="flex space-x-2">
+            <div className="flex justify-between items-center">
+              <h2
+                className={`text-xl font-semibold ${
+                  item.isDone ? "line-through text-gray-400" : "text-gray-800"
+                }`}
+              >
+                {item.taskName}
+              </h2>
+              <p className="text-gray-500 text-sm">
+                {new Date(item.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+            <div className="flex justify-end space-x-2 mt-4">
               <button
                 onClick={() => handleCheckAndUncheck(item)}
                 className="bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition-all"
@@ -223,8 +214,6 @@ function TaskManager() {
           </div>
         ))}
       </div>
-
-      {/* Toastify */}
       <ToastContainer
         position="top-right"
         autoClose={3000}
