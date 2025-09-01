@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
 });
 
 const corsOptions = {
-  origin: "https://simple-task-manager-dh7f.onrender.com", // Frontend URL
+  origin: process.env.FRONTEND_URL || "http://localhost:3000", // Frontend URL
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,  // If you need to send cookies or session data
 };
